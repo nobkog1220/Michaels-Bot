@@ -42,8 +42,8 @@ def load_system_prompt():
 
 # Load once at server startup, reuse for every request
 SYSTEM_PROMPT = load_system_prompt()
-LOGS_DIR = Path("conversation_logs")
-LOGS_DIR.mkdir(exist_ok=True)
+LOGS_DIR = Path(os.getenv("LOGS_DIR", "conversation_logs"))
+LOGS_DIR.mkdir(exist_ok=True, parents=True)
 
 def log_conversation(session_id, conversation, latest_reply):
     """Save or update a conversation log file."""
