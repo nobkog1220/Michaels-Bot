@@ -1,4 +1,4 @@
-# Environment variables (NEVER commit these)
+# Environment variables
 .env
 
 # Python
@@ -11,7 +11,7 @@ venv/
 # IDE
 .idea/
 
-# Logs (don't commit local test logs)
+# Logs
 conversation_logs/
 
 # OS
