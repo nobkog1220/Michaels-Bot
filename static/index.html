@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Michael's Grill & Salad Bar</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <!-- Placeholder landing page content (we'll build this later) -->
+    <main class="landing">
+        <h1>Michael's Grill & Salad Bar</h1>
+        <p>Highland Park, IL. Since 1977.</p>
+        <p>This is a placeholder demo site. The real restaurant info would go here.</p>
+    </main>
+
+    <!-- Floating chat button (the popup trigger) -->
+    <button id="chat-toggle-btn" aria-label="Open chat">
+        <span id="chat-toggle-icon">💬</span>
+    </button>
+
+    <!-- The chat widget itself (hidden by default) -->
+    <div id="chat-widget" class="hidden">
+        <div id="chat-header">
+            <span>Ask Michael's</span>
+            <button id="chat-close-btn" aria-label="Close chat">×</button>
+        </div>
+        <div id="messages"></div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Ask about our menu, catering, events...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="/static/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Environment variables (NEVER commit these)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.idea/
+
+# Logs (don't commit local test logs)
+conversation_logs/
+
+# OS
+.DS_Store
+Thumbs.db
