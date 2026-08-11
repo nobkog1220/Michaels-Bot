@@ -8,6 +8,7 @@ from pathlib import Path
 from datetime import datetime
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import threading
 # Load environment variables (your API key from .env)
 load_dotenv()
 print(f"DEBUG — ADMIN_PASSWORD from env: '{os.getenv('ADMIN_PASSWORD')}'")
@@ -64,7 +65,7 @@ def send_notification(session_id=None):
     msg.set_content(f"A new chat session started.\nSession ID: {session_id}")
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
             smtp.login(gmail_address, gmail_password)
             smtp.send_message(msg)
     except Exception as e:
@@ -84,7 +85,7 @@ def log_conversation(session_id, conversation, latest_reply):
             "started_at": datetime.now().isoformat(),
             "messages": []
         }
-        send_notification(session_id)
+        threading.Thread(target=send_notification, args=(session_id,)).start()
 
     # Update with the latest exchange
     log_data["last_updated"] = datetime.now().isoformat()
