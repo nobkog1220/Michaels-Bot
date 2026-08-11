@@ -1,0 +1,285 @@
+<style>
+  :root {
+    --michaels-red: #D92028;
+    --michaels-red-dark: #B81B22;
+    --michaels-white: #FFFFFF;
+    --michaels-text: #1a1a1a;
+    --michaels-font-display: "lulo-clean-w01-one-bold", "Arial Black", sans-serif;
+    --michaels-font-body: "din-next-w01-light", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  #mb-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--michaels-red);
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 9999;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: var(--michaels-font-body);
+  }
+
+  #mb-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  #mb-toggle-btn:active {
+    transform: scale(0.95);
+  }
+
+  #mb-chat-widget {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 380px;
+    height: 560px;
+    max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 140px);
+    background: var(--michaels-white);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9998;
+    transition: opacity 0.2s, transform 0.2s;
+    font-family: var(--michaels-font-body);
+    color: var(--michaels-text);
+  }
+
+  #mb-chat-widget.mb-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
+
+  #mb-chat-header {
+    background: var(--michaels-red);
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--michaels-font-display);
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  #mb-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    font-family: var(--michaels-font-body);
+  }
+
+  #mb-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  #mb-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #fafafa;
+  }
+
+  .mb-message {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 14px;
+  }
+
+  .mb-user-message {
+    background: var(--michaels-red);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+
+  .mb-bot-message {
+    background: white;
+    color: var(--michaels-text);
+    border: 1px solid #eee;
+    border-bottom-left-radius: 4px;
+  }
+
+  .mb-bot-message strong { font-weight: 600; }
+  .mb-bot-message em { font-style: italic; }
+  .mb-bot-message ol, .mb-bot-message ul { padding-left: 20px; margin: 8px 0; }
+  .mb-bot-message li { margin: 4px 0; }
+  .mb-bot-message p { margin: 8px 0; }
+  .mb-bot-message p:first-child { margin-top: 0; }
+  .mb-bot-message p:last-child { margin-bottom: 0; }
+
+  #mb-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #eee;
+    background: white;
+  }
+
+  #mb-user-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    font-family: var(--michaels-font-body);
+    color: var(--michaels-text);
+  }
+
+  #mb-user-input:focus {
+    border-color: var(--michaels-red);
+  }
+
+  #mb-send-btn {
+    padding: 0 18px;
+    background: var(--michaels-red);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: var(--michaels-font-display);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  #mb-send-btn:hover {
+    background: var(--michaels-red-dark);
+  }
+
+  #mb-send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    #mb-chat-widget {
+      width: calc(100vw - 24px);
+      right: 12px;
+      bottom: 90px;
+      height: calc(100vh - 120px);
+    }
+
+    #mb-toggle-btn {
+      bottom: 16px;
+      right: 16px;
+    }
+  }
+</style>
+
+<button id="mb-toggle-btn" aria-label="Open Michael's chat">💬</button>
+
+<div id="mb-chat-widget" class="mb-hidden">
+  <div id="mb-chat-header">
+    <span>Ask Michael's</span>
+    <button id="mb-close-btn" aria-label="Close chat">×</button>
+  </div>
+  <div id="mb-messages"></div>
+  <div id="mb-input-area">
+    <input type="text" id="mb-user-input" placeholder="Ask about our menu, catering, events...">
+    <button id="mb-send-btn">Send</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  (function() {
+    const BACKEND_URL = "https://michaels-chatbot.up.railway.app/chat";
+
+    const messagesDiv = document.getElementById("mb-messages");
+    const userInput = document.getElementById("mb-user-input");
+    const sendBtn = document.getElementById("mb-send-btn");
+    const toggleBtn = document.getElementById("mb-toggle-btn");
+    const closeBtn = document.getElementById("mb-close-btn");
+    const chatWidget = document.getElementById("mb-chat-widget");
+
+    let conversation = [];
+    let sessionId = crypto.randomUUID();
+
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "mb-message mb-" + sender + "-message";
+      if (sender === "bot") {
+        messageDiv.innerHTML = marked.parse(text);
+      } else {
+        messageDiv.textContent = text;
+      }
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      conversation.push({role: "user", content: text});
+      userInput.value = "";
+      sendBtn.disabled = true;
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            conversation: conversation,
+            session_id: sessionId
+          })
+        });
+
+        const data = await response.json();
+        addMessage(data.reply, "bot");
+        conversation.push({role: "assistant", content: data.reply});
+      } catch (error) {
+        addMessage("Sorry, having trouble connecting right now. Please try again, or call us at (847) 432-3338.", "bot");
+        console.error(error);
+      }
+
+      sendBtn.disabled = false;
+      userInput.focus();
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    toggleBtn.addEventListener("click", function() {
+      chatWidget.classList.toggle("mb-hidden");
+      if (!chatWidget.classList.contains("mb-hidden")) {
+        userInput.focus();
+      }
+    });
+
+    closeBtn.addEventListener("click", function() {
+      chatWidget.classList.add("mb-hidden");
+    });
+  })();
+</script>

@@ -44,6 +44,31 @@ def load_system_prompt():
 SYSTEM_PROMPT = load_system_prompt()
 LOGS_DIR = Path(os.getenv("LOGS_DIR", "conversation_logs"))
 LOGS_DIR.mkdir(exist_ok=True, parents=True)
+import smtplib
+from email.message import EmailMessage
+
+def send_notification(session_id=None):
+    """Send an email alert when a new bot session starts."""
+    gmail_address = os.environ.get("GMAIL_ADDRESS")
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
+    notify_email = os.environ.get("NOTIFY_EMAIL")
+
+    if not all([gmail_address, gmail_password, notify_email]):
+        print("Notification skipped: missing email env vars")
+        return
+
+    msg = EmailMessage()
+    msg["Subject"] = "New Michael's Bot Session"
+    msg["From"] = gmail_address
+    msg["To"] = notify_email
+    msg.set_content(f"A new chat session started.\nSession ID: {session_id}")
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(gmail_address, gmail_password)
+            smtp.send_message(msg)
+    except Exception as e:
+        print(f"Failed to send notification email: {e}")
 
 def log_conversation(session_id, conversation, latest_reply):
     """Save or update a conversation log file."""
@@ -59,6 +84,7 @@ def log_conversation(session_id, conversation, latest_reply):
             "started_at": datetime.now().isoformat(),
             "messages": []
         }
+        send_notification(session_id)
 
     # Update with the latest exchange
     log_data["last_updated"] = datetime.now().isoformat()
