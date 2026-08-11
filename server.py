@@ -48,7 +48,7 @@ LOGS_DIR.mkdir(exist_ok=True, parents=True)
 import smtplib
 from email.message import EmailMessage
 
-def send_notification(session_id=None):
+def send_notification(session_id=None, first_message=None, first_reply=None):
     """Send an email alert when a new bot session starts."""
     gmail_address = os.environ.get("GMAIL_ADDRESS")
     gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
@@ -62,7 +62,12 @@ def send_notification(session_id=None):
     msg["Subject"] = "New Michael's Bot Session"
     msg["From"] = gmail_address
     msg["To"] = notify_email
-    msg.set_content(f"A new chat session started.\nSession ID: {session_id}")
+    msg.set_content(
+        f"A new chat session started.\n"
+        f"Session ID: {session_id}\n\n"
+        f"Customer: {first_message}\n"
+        f"Bot: {first_reply}"
+    )
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
@@ -85,7 +90,11 @@ def log_conversation(session_id, conversation, latest_reply):
             "started_at": datetime.now().isoformat(),
             "messages": []
         }
-        threading.Thread(target=send_notification, args=(session_id,)).start()
+        first_message = conversation[0]["content"] if conversation else ""
+        threading.Thread(
+            target=send_notification,
+            args=(session_id, first_message, latest_reply)
+        ).start()
 
     # Update with the latest exchange
     log_data["last_updated"] = datetime.now().isoformat()
